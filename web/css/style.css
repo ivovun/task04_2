@@ -1,0 +1,14 @@
+html, body {
+    width: 100%;
+}
+table, tr, th, td {
+    margin: 0 auto;
+    border: 1px solid black;
+    text-align: center;
+    justify-content: center;
+    padding: 5px;
+}
+div {
+    text-align: center;
+    justify-content: center
+}
