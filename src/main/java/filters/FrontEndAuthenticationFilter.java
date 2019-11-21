@@ -84,5 +84,6 @@ public class FrontEndAuthenticationFilter implements Filter {
     }
 
     public void init(FilterConfig fConfig)  {
+
     }
 }
