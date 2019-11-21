@@ -7,7 +7,6 @@ import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -24,39 +23,49 @@ public class FrontEndAuthenticationFilter implements Filter {
             "/", "/user", "/admin", "/list", "/delete", "/insert", "/update", "/edit"
     };
 
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
             throws IOException, ServletException {
-        httpRequest = (HttpServletRequest) request;
+        httpRequest = (HttpServletRequest) req;
 
         String path = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
 
         if (path.startsWith("/admin/") ) {
-            chain.doFilter(request, response);
+            chain.doFilter(req, resp);
             return;
         }
 
         HttpSession session = httpRequest.getSession(false);
 
-        boolean isLoggedIn = (session != null && session.getAttribute(UserService.userRoleSessionAttributeName) != null);
+        boolean isLoggedIn = (session != null
+                &&
+                (session.getAttribute(UserService.customerUser) != null || session.getAttribute(UserService.adminUser) != null));
 
         boolean isLoginRequest = httpRequest.getRequestURI().equals(httpRequest.getContextPath() + "/login");
         boolean isLoginPage = httpRequest.getRequestURI().endsWith("index.jsp");
 
-        request.setAttribute("wrong_password_or_login", "");
+        req.setAttribute("wrong_password_or_login", "");
 
-        if (isLoggedIn && (isLoginRequest || isLoginPage)) {
+        if (isLoggedIn && (isLoginRequest || isLoginPage)  ) {
             // the user is already logged in and he's trying to login again
-            // then forward to the homepage
-            httpRequest.getRequestDispatcher("/").forward(request, response);
+            if ("POST".equals(httpRequest.getMethod())) {
+//                req.setAttribute("user", session.getAttribute(UserService.customerUser));
+//                req.getRequestDispatcher("/user/user.jsp").forward(req, resp);
+                session.setAttribute(UserService.adminUser, null);
+                session.setAttribute(UserService.customerUser, null);
+            }
 
-        } else if (!isLoggedIn && isLoginRequired()) {
+            req.getRequestDispatcher("/login").forward(req, resp);
+
+
+        } else if (!isLoggedIn && isLoginRequired() && !(isLoginRequest || isLoginPage)) {
             // the user is not logged in, and the requested page requires
             // authentication, then forward to the login page
-            httpRequest.getRequestDispatcher("/index.jsp").forward(request, response);
+//            httpRequest.getRequestDispatcher("/index.jsp").forward(req, resp);
+            req.getRequestDispatcher("/login").forward(req, resp);
         } else {
             // for other requested pages that do not require authentication
             // or the user is already logged in, continue to the destination
-            chain.doFilter(request, response);
+            chain.doFilter(req, resp);
         }
     }
 
@@ -74,6 +83,6 @@ public class FrontEndAuthenticationFilter implements Filter {
     public void destroy() {
     }
 
-    public void init(FilterConfig fConfig) throws ServletException {
+    public void init(FilterConfig fConfig)  {
     }
 }

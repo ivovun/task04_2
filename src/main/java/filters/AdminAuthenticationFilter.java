@@ -6,7 +6,6 @@ import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -15,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * This Java filter demonstrates how to intercept the request
- * and transform the response to implement authentication feature.
+ * This Java filter demonstrates how to intercept the req
+ * and transform the resp to implement authentication feature.
  * for the website's back-end.
  *
  * @author www.codejava.net
@@ -24,13 +23,13 @@ import javax.servlet.http.HttpSession;
 @WebFilter("/admin/*")
 public class AdminAuthenticationFilter implements Filter {
 
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletRequest httpRequest = (HttpServletRequest) req;
         HttpSession session = httpRequest.getSession(false);
 
-        boolean isLoggedIn = (session != null && session.getAttribute(UserService.adminRoleSessionAttributeName) != null);
+        boolean isLoggedIn = (session != null && session.getAttribute(UserService.adminUser) != null);
 
         boolean isLoginRequest = httpRequest.getRequestURI().equals(httpRequest.getContextPath() + "/admin/login");
 
@@ -38,24 +37,24 @@ public class AdminAuthenticationFilter implements Filter {
         if (isLoggedIn && (isLoginRequest || httpRequest.getRequestURI().endsWith("index.jsp"))) {
             // the admin is already logged in and he's trying to login again
             // then forwards to the admin's homepage
-            request.getRequestDispatcher("/admin/").forward(request, response);
+            req.getRequestDispatcher("/admin/list").forward(req, resp);
 
         } else if (isLoggedIn || isLoginRequest) {
             // continues the filter chain
-            // allows the request to reach the destination
-            chain.doFilter(request, response);
+            // allows the req to reach the destination
+            chain.doFilter(req, resp);
 
         } else {
             // the admin is not logged in, so authentication is required
             // forwards to the Login page
-            request.getRequestDispatcher("index.jsp").forward(request, response);
+            req.getRequestDispatcher("/login").forward(req, resp);
         }
     }
 
     public void destroy() {
     }
 
-    public void init(FilterConfig fConfig) throws ServletException {
+    public void init(FilterConfig fConfig)  {
     }
 
 }

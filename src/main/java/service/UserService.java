@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface UserService {
 
-    public static final String userRoleName = "user";
-    public static final String userRoleSessionAttributeName = "customerUser";
-    public static final String adminRoleName = "admin";
-    public static final String adminRoleSessionAttributeName = "adminUser";
+    static final String userRoleName = "user";
+    static final String customerUser = "customerUser";
+    static final String adminRoleName = "admin";
+    static final String adminUser = "adminUser";
 
 
     boolean insertUser(User user) throws DBException;
@@ -19,7 +19,7 @@ public interface UserService {
 
     User selectUserByLogin(String login) throws DBException;
 
-    List<User> selectAllUsers()throws DBException;
+    List<User> selectAllUsers() throws DBException;
 
     void deleteUser(long id) throws DBException;
 
