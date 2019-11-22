@@ -43,6 +43,7 @@ public class UserLoginServlet extends HttpServlet {
                     session.setAttribute(UserService.adminUser, null);
 //                    resp.sendRedirect("/user");
                     req.setAttribute("user", user);
+                    //todo редиректы на страницы
                     req.getRequestDispatcher(   "/user/user.jsp").forward(req, resp);
                 } else if (user.getRole().equals(UserService.adminRoleName)) {
                     session.setAttribute(UserService.customerUser, null);
