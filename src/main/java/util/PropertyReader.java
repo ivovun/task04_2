@@ -3,7 +3,6 @@ package util;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.PreparedStatement;
 import java.util.Properties;
 
 public class PropertyReader {

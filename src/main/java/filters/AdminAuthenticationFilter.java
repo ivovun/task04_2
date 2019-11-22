@@ -1,5 +1,6 @@
 package filters;
 
+import model.User;
 import service.UserService;
 
 import java.io.IOException;
@@ -29,7 +30,8 @@ public class AdminAuthenticationFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) req;
         HttpSession session = httpRequest.getSession(false);
 // todo  один
-        boolean isLoggedIn = (session != null && session.getAttribute(UserService.adminUser) != null);
+        User adminUser = session != null ?  (User) session.getAttribute(UserService.authenticatedUser) : null;
+        boolean isLoggedIn = (adminUser != null && adminUser.getRole().equals(UserService.adminRoleName));
 
         boolean isLoginRequest = httpRequest.getRequestURI().equals(httpRequest.getContextPath() + "/admin/login");
 

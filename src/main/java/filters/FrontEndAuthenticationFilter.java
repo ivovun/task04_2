@@ -1,5 +1,6 @@
 package filters;
 
+import model.User;
 import service.UserService;
 
 import java.io.IOException;
@@ -35,10 +36,9 @@ public class FrontEndAuthenticationFilter implements Filter {
         }
 
         HttpSession session = httpRequest.getSession(false);
+        User authenticatedUser =  session != null ? (User) session.getAttribute(UserService.authenticatedUser) : null;
 
-        boolean isLoggedIn = (session != null
-                &&
-                (session.getAttribute(UserService.customerUser) != null || session.getAttribute(UserService.adminUser) != null));
+        boolean isLoggedIn = authenticatedUser != null;
 
         boolean isLoginRequest = httpRequest.getRequestURI().equals(httpRequest.getContextPath() + "/login");
         boolean isLoginPage = httpRequest.getRequestURI().endsWith("index.jsp");
@@ -50,8 +50,7 @@ public class FrontEndAuthenticationFilter implements Filter {
             if ("POST".equals(httpRequest.getMethod())) {
 //                req.setAttribute("user", session.getAttribute(UserService.customerUser));
 //                req.getRequestDispatcher("/user/user.jsp").forward(req, resp);
-                session.setAttribute(UserService.adminUser, null);
-                session.setAttribute(UserService.customerUser, null);
+                session.setAttribute(UserService.authenticatedUser, null);
             }
 
             req.getRequestDispatcher("/login").forward(req, resp);

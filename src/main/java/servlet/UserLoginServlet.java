@@ -39,19 +39,18 @@ public class UserLoginServlet extends HttpServlet {
             if (user != null && user.getPassword().equals(req.getParameter("password"))) {
                 HttpSession session = req.getSession();
                 if (user.getRole().equals(UserService.userRoleName)) {
-                    session.setAttribute(UserService.customerUser, user);
-                    session.setAttribute(UserService.adminUser, null);
+                    session.setAttribute(UserService.authenticatedUser, user);
 //                    resp.sendRedirect("/user");
                     req.setAttribute("user", user);
                     //todo редиректы на страницы
                     req.getRequestDispatcher(   "/user/user.jsp").forward(req, resp);
                 } else if (user.getRole().equals(UserService.adminRoleName)) {
-                    session.setAttribute(UserService.customerUser, null);
-                    session.setAttribute(UserService.adminUser, user);
+                    session.setAttribute(UserService.authenticatedUser, user);
                     resp.sendRedirect("admin/list");
                 } else {
-                    session.setAttribute(UserService.customerUser, null);
-                    session.setAttribute(UserService.adminUser, null);
+                    session.setAttribute(UserService.authenticatedUser, null);
+                    req.setAttribute("wrong_password_or_login", "wrong ROLE NAME !!!!");
+                    resp.sendRedirect("/login");;
                 }
                 return;
             } else {

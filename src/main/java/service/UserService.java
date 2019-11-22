@@ -9,9 +9,8 @@ public interface UserService {
 
     //todo в ресурс
     static final String userRoleName = "user";
-    static final String customerUser = "customerUser";
+    static final String authenticatedUser = "customerUser";
     static final String adminRoleName = "admin";
-    static final String adminUser = "adminUser";
 
 
     boolean insertUser(User user) throws DBException;

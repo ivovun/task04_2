@@ -1,6 +1,5 @@
 package servlet;
 
-import exception.DBException;
 import model.User;
 import service.UserService;
 import service.UserServiceImpl;
@@ -19,8 +18,7 @@ public class UserPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User user = (User) req.getAttribute(UserService.customerUser);
-        req.setAttribute("user", user == null ? (User) req.getSession().getAttribute(UserService.adminUser) : user);
+        req.setAttribute("user", req.getAttribute(UserService.authenticatedUser));
         req.getRequestDispatcher("/user/user.jsp").forward(req, resp);
     }
 }
