@@ -11,6 +11,8 @@
 <div>
 
     <h1>User Management</h1>
+    <a href="/logout">log out</a>
+
 <%--    <h2>--%>
 <%--        <a href="new">Add New User</a>--%>
 <%--        &nbsp;&nbsp;&nbsp;--%>

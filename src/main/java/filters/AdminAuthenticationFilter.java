@@ -12,6 +12,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -35,21 +36,44 @@ public class AdminAuthenticationFilter implements Filter {
 
         boolean isLoginRequest = httpRequest.getRequestURI().equals(httpRequest.getContextPath() + "/admin/login");
 
+        if (isLoggedIn) {
+            if ( isLoginRequest) {
+                // the admin is already logged in and he's trying to login again
+                // then forwards to the admin's homepage
+                ((HttpServletResponse) resp).sendRedirect("/admin/list");
+            } else {
+                // continues the filter chain
+                // allows the req to reach the destination
+                chain.doFilter(req, resp);
 
-        if (isLoggedIn && (isLoginRequest || httpRequest.getRequestURI().endsWith("index.jsp"))) {
-            // the admin is already logged in and he's trying to login again
-            // then forwards to the admin's homepage
-            req.getRequestDispatcher("/admin/list").forward(req, resp);
+//                if (httpRequest.getRequestURI().equals("/admin/list")) {
+//                    req.getRequestDispatcher("/admin/user-list.jsp").forward(req, resp);
+//                }
+            }
 
-        } else if (isLoggedIn || isLoginRequest) {
-            // continues the filter chain
-            // allows the req to reach the destination
-            chain.doFilter(req, resp);
+//        } else if (isLoggedIn || isLoginRequest) {
+//            // continues the filter chain
+//            // allows the req to reach the destination
+//            chain.doFilter(req, resp);
 
         } else {
-            // the admin is not logged in, so authentication is required
-            // forwards to the Login page
-            req.getRequestDispatcher("/login").forward(req, resp);
+            // the admin is not logged in, if user isn't logged in
+            //  forwards to the Login page
+            //  else Forbidden
+            //
+            User authenticatedUser = (User) session.getAttribute(UserService.authenticatedUser);
+            if (session != null && authenticatedUser != null) {
+                req.setAttribute("user", authenticatedUser);
+                req.setAttribute("errorMessage", "!!!!!!!"+HttpServletResponse.SC_FORBIDDEN + "!!!!!!!");
+                ((HttpServletResponse)resp).setStatus(HttpServletResponse.SC_FORBIDDEN);
+
+                req.getRequestDispatcher("/Forbidden.jsp").forward(req, resp);
+//                throw new ServletException("Forbidden!");
+//                ((HttpServletResponse) resp).sendRedirect("/user");
+            } else {
+                ((HttpServletResponse) resp).sendRedirect("/login");
+
+            }
         }
     }
 

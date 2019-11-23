@@ -20,14 +20,6 @@ public class UserLoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher("index.jsp").forward(req, resp);
-
-//        super.doGet(req, resp);
-//        try {
-//            req.setAttribute("listUser", userService.selectAllUsers());
-//            req.getRequestDispatcher("user-list.jsp").forward(req, resp);
-//        } catch (DBException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override
@@ -40,17 +32,14 @@ public class UserLoginServlet extends HttpServlet {
                 HttpSession session = req.getSession();
                 if (user.getRole().equals(UserService.userRoleName)) {
                     session.setAttribute(UserService.authenticatedUser, user);
-//                    resp.sendRedirect("/user");
-                    req.setAttribute("user", user);
-                    //todo редиректы на страницы
-                    req.getRequestDispatcher(   "/user/user.jsp").forward(req, resp);
+                    resp.sendRedirect(   "/user");
                 } else if (user.getRole().equals(UserService.adminRoleName)) {
                     session.setAttribute(UserService.authenticatedUser, user);
                     resp.sendRedirect("admin/list");
                 } else {
                     session.setAttribute(UserService.authenticatedUser, null);
                     req.setAttribute("wrong_password_or_login", "wrong ROLE NAME !!!!");
-                    resp.sendRedirect("/login");;
+                    req.getRequestDispatcher("index.jsp").forward(req, resp);
                 }
                 return;
             } else {
