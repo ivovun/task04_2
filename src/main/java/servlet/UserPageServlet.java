@@ -1,8 +1,6 @@
 package servlet;
 
-import model.User;
-import service.UserService;
-import service.UserServiceImpl;
+import util.PropertyReader;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,11 +12,9 @@ import java.io.IOException;
 
 @WebServlet(name = "UserPageServlet",  urlPatterns = { "/user", "/admin/user"})
 public class UserPageServlet extends HttpServlet {
-    private UserService userService = UserServiceImpl.getInstance();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("user", req.getSession().getAttribute(UserService.authenticatedUser));
+        req.setAttribute("user", req.getSession().getAttribute(PropertyReader.getProperty("authenticatedUser")));
         req.getRequestDispatcher("/user/user.jsp").forward(req, resp);
     }
 }

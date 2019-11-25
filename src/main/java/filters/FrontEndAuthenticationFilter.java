@@ -2,6 +2,7 @@ package filters;
 
 import model.User;
 import service.UserService;
+import util.PropertyReader;
 
 import java.io.IOException;
 
@@ -37,16 +38,14 @@ public class FrontEndAuthenticationFilter implements Filter {
         }
 
         HttpSession session = httpRequest.getSession(false);
-        User authenticatedUser = session != null ? (User) session.getAttribute(UserService.authenticatedUser) : null;
-
+        User authenticatedUser = session != null ? (User) session.getAttribute(PropertyReader.getProperty("authenticatedUser")) : null;
 
         boolean isLoggedIn = authenticatedUser != null;
-
         boolean isLoginRequest = httpRequest.getRequestURI().equals(httpRequest.getContextPath() + "/login");
         boolean isLoginPage = httpRequest.getRequestURI().endsWith("index.jsp");
 
         if (path.contains("logout") && isLoggedIn) {
-            session.setAttribute(UserService.authenticatedUser, null);
+            session.setAttribute(PropertyReader.getProperty("authenticatedUser"), null);
             ((HttpServletResponse) resp).sendRedirect("/login");
             return;
         }
@@ -55,19 +54,13 @@ public class FrontEndAuthenticationFilter implements Filter {
 
         if (isLoggedIn && (isLoginRequest || isLoginPage)) {
             // the user is already logged in and he's trying to login again
-//            if ("POST".equals(httpRequest.getMethod())) {
-////                req.setAttribute("user", session.getAttribute(UserService.customerUser));
-////                req.getRequestDispatcher("/user/user.jsp").forward(req, resp);
-//                session.setAttribute(UserService.authenticatedUser, null);
-//            }
             ((HttpServletResponse) resp).sendRedirect(
-                    ((User) session.getAttribute(UserService.authenticatedUser)).getRole().equals(UserService.adminRoleName)
+                    ((User) session.getAttribute(PropertyReader.getProperty("authenticatedUser"))).getRole().equals(PropertyReader.getProperty("adminRoleName"))
                             ? "/admin/list" : "/user");
 
         } else if (!isLoggedIn && isLoginRequired() && !(isLoginRequest || isLoginPage)) {
             // the user is not logged in, and the requested page requires
             // authentication, then forward to the login page
-//            httpRequest.getRequestDispatcher("/index.jsp").forward(req, resp);
             req.getRequestDispatcher("/login").forward(req, resp);
         } else {
             // for other requested pages that do not require authentication

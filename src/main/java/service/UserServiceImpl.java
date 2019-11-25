@@ -2,15 +2,11 @@ package service;
 
 import DaoFactory.UserDaoFactory;
 import dao.UserDao;
-import dao.UserHibernateDAO;
 import exception.DBException;
 import model.User;
-import org.hibernate.SessionFactory;
-import util.DBHelper;
 import util.PropertyReader;
 
 import java.util.List;
-import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
     private static UserServiceImpl userServiceImpl;

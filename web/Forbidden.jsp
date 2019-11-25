@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<h1 style="color:DodgerBlue ;" >${user.name}, куда ты полез, гад????</h1>
+<h1 style="color:DodgerBlue ;" >${user.name}, куда ты полез????</h1>
 <h1 style="color:Tomato;">${errorMessage}</h1>
 </body>
 </html>

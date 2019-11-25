@@ -4,6 +4,7 @@ import exception.DBException;
 import model.User;
 import service.UserService;
 import service.UserServiceImpl;
+import util.PropertyReader;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,21 +31,22 @@ public class UserLoginServlet extends HttpServlet {
             User user = userService.selectUserByLogin(req.getParameter("login"));
             if (user != null && user.getPassword().equals(req.getParameter("password"))) {
                 HttpSession session = req.getSession();
-                if (user.getRole().equals(UserService.userRoleName)) {
-                    session.setAttribute(UserService.authenticatedUser, user);
+                if (user.getRole().equals(PropertyReader.getProperty("userRoleName"))) {
+                    session.setAttribute(PropertyReader.getProperty("authenticatedUser"), user);
                     resp.sendRedirect(   "/user");
-                } else if (user.getRole().equals(UserService.adminRoleName)) {
-                    session.setAttribute(UserService.authenticatedUser, user);
+                } else if (user.getRole().equals(PropertyReader.getProperty("adminRoleName"))) {
+                    session.setAttribute(PropertyReader.getProperty("authenticatedUser"), user);
                     resp.sendRedirect("admin/list");
                 } else {
-                    session.setAttribute(UserService.authenticatedUser, null);
+                    session.setAttribute(PropertyReader.getProperty("authenticatedUser"), null);
                     req.setAttribute("wrong_password_or_login", "wrong ROLE NAME !!!!");
-                    req.getRequestDispatcher("index.jsp").forward(req, resp);
+                    resp.sendRedirect("/login");
                 }
                 return;
             } else {
                 req.setAttribute("wrong_password_or_login", "wrong password or login!!!!");
-                req.getRequestDispatcher("index.jsp").forward(req, resp);
+                resp.sendRedirect("/login");
+//                req.getRequestDispatcher("index.jsp").forward(req, resp);
             }
         } catch (DBException e) {
             //todo сделать пересыл на повторны й логин или что-то

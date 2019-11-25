@@ -1,8 +1,5 @@
 package executor;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 /**
  * @author v.chibrikov
  *         <p>

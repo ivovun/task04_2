@@ -6,13 +6,6 @@ import model.User;
 import java.util.List;
 
 public interface UserService {
-
-    //todo в ресурс
-    static final String userRoleName = "user";
-    static final String authenticatedUser = "customerUser";
-    static final String adminRoleName = "admin";
-
-
     boolean insertUser(User user) throws DBException;
 
     User selectUser(long id) throws DBException;
